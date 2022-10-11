@@ -33,22 +33,23 @@ class MasterMind
     ] # {color('black')}]
     @guessing_colors_arr = ["\u25CB " * 4] * 10
     @input = nil
-    @correct_guess_arr = ["\u2715 " * 4]
+    @correct_guess_arr = ["\u2715 " * 4] * 10
+    @index_number = 0
   end
 
   def display # rubocop:disable Metrics/MethodLength
     "     1 2 3 4 5 6 7 8\     \n "\
     "    #{YELLOW_PEG} #{WHITE_PEG} #{RED_PEG} #{ORANGE_PEG} #{GREEN_PEG} #{BROWN_PEG} #{BLUE_PEG} #{BLACK_PEG}\n\n" \
-    "10  #{"\u25CB " * 4}  \u2715 \u2715 \u2715 \u2715\n" \
-    "9   #{"\u25CB " * 4}  \u2715 \u2715 \u2715 \u2715\n" \
-    "8   #{"\u25CB " * 4}  \u2715 \u2715 \u2715 \u2715\n" \
-    "7   #{"\u25CB " * 4}  \u2715 \u2715 \u2715 \u2715\n" \
-    "6   #{"\u25CB " * 4}  \u2715 \u2715 \u2715 \u2715\n" \
-    "5   #{"\u25CB " * 4}  \u2715 \u2715 \u2715 \u2715\n" \
-    "4   #{"\u25CB " * 4}  \u2715 \u2715 \u2715 \u2715\n" \
-    "3   #{"\u25CB " * 4}  \u2715 \u2715 \u2715 \u2715\n" \
-    "2   #{"\u25CB " * 4}  \u2715 \u2715 \u2715 \u2715\n" \
-    "1   #{@guessing_colors_arr[0]}  #{@correct_guess_arr[0]} #{@correct_guess_arr[1]} #{@correct_guess_arr[2]} #{@correct_guess_arr[3]}"
+    "10  #{"\u25CB " * 4}  #{@correct_guess_arr[9]}\n" \
+    "9   #{"\u25CB " * 4}  #{@correct_guess_arr[8]}\n" \
+    "8   #{"\u25CB " * 4}  #{@correct_guess_arr[7]}\n" \
+    "7   #{"\u25CB " * 4}  #{@correct_guess_arr[6]}\n" \
+    "6   #{"\u25CB " * 4}  #{@correct_guess_arr[5]}\n" \
+    "5   #{"\u25CB " * 4}  #{@correct_guess_arr[4]}\n" \
+    "4   #{"\u25CB " * 4}  #{@correct_guess_arr[3]}\n" \
+    "3   #{"\u25CB " * 4}  #{@correct_guess_arr[2]}\n" \
+    "2   #{"\u25CB " * 4}  #{@correct_guess_arr[1]}\n" \
+    "1   #{@guessing_colors_arr[0]}  #{@correct_guess_arr[0]}"
     # "1   #{"\u25CB " * 4}  #{color('correct')} \u2714 \u2715 \u2715"
   end
 
@@ -88,28 +89,36 @@ class MasterMind
     correct_peg_position_arr = []
     correct_peg_arr = []
     incorrect_peg_arr = []
-    computer_colors.each_with_index do |color, index|
-      if color == @input[index]
-        correct_peg_position_arr << CORRECT_PEG_POSITION
-      elsif @input.split('').include?(color)
-        correct_peg_arr << CORRECT_PEG
-      else
-        incorrect_peg_arr << INCORRECT_PEG
+    # @correct_guess_arr.length.times do |number|
+      computer_colors.each_with_index do |color, index|
+        if color == @input[index]
+          correct_peg_position_arr << "#{CORRECT_PEG_POSITION} "
+        elsif @input.split('').include?(color)
+          correct_peg_arr << "#{CORRECT_PEG} "
+        else
+          incorrect_peg_arr << "#{INCORRECT_PEG} "
+        end
       end
-    end
-    @correct_guess_arr = correct_peg_position_arr + correct_peg_arr + incorrect_peg_arr
+      @correct_guess_arr[@index_number] = correct_peg_position_arr.join + correct_peg_arr.join + incorrect_peg_arr.join
+      correct_peg_position_arr.clear
+      correct_peg_arr.clear
+      incorrect_peg_arr.clear
+      @index_number += 1
+    # end
   end
 end
 
 puts
 mastermind = MasterMind.new
 puts mastermind.display
-puts
-mastermind.display
-puts
-mastermind.enter_colors_guess
-puts mastermind.guess_correct?
-mastermind.update_guess_color_row
-mastermind.update_correct_guesses
-system 'clear'
-puts mastermind.display
+10.times do
+  puts
+  # mastermind.display
+  # puts
+  mastermind.enter_colors_guess
+  puts mastermind.guess_correct?
+  mastermind.update_guess_color_row
+  mastermind.update_correct_guesses
+  system 'clear'
+  puts mastermind.display
+end
