@@ -57,7 +57,7 @@ class MasterMind
   end
 
   def enter_colors_guess
-    puts 'Enter your guess:'
+    puts "\nEnter your guess:"
     @input = gets.chomp
   end
 
@@ -70,10 +70,9 @@ class MasterMind
     @guessing_colors_arr[@index_number] = guessing_line.join
   end
 
-  # def win?
-  #   puts "You Won"
-  #   @guessing_colors_arr[@index_number] == computer_colors.join(" ")
-  # end
+  def win?
+    "\nWell Done you guessed in #{@index_number}\n\n" if guess_correct?
+  end
 
   def update_correct_guesses
     correct_peg_position_arr = []
@@ -100,13 +99,12 @@ puts
 mastermind = MasterMind.new
 puts mastermind.display
 10.times do
-  puts
   mastermind.enter_colors_guess
   puts mastermind.guess_correct?
   mastermind.update_guess_color_row
   mastermind.update_correct_guesses
   system 'clear'
   puts mastermind.display
-  puts
-  # return if mastermind.win?
+  puts mastermind.win?
+  return if mastermind.guess_correct?
 end
