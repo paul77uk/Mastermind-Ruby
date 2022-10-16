@@ -3,7 +3,7 @@ class Peg
 
   attr_accessor :color, :numbers, :unicode
 
-  def initialize(color, numbers = nil, unicode: "\u25CF")
+  def initialize(color = nil, numbers = nil, unicode: "\u25CF")
     self.color = color
     self.numbers = numbers
     self.unicode = unicode
@@ -26,14 +26,17 @@ class MasterMind
   CORRECT_PEG_POSITION = Peg.new('0;128;0', unicode: "\u2714")
   CORRECT_PEG = Peg.new('0;0;0', unicode: "\u2714")
   INCORRECT_PEG = Peg.new('0;0;0', unicode: "\u2715")
+  EMPTY_PEG = Peg.new(unicode: "\u25CB")
+  INPUT_MESSAGE = 'Enter your guess:'.freeze
+  ERROR_MESSAGE = 'input must be 4 numbers each from 1..8 matching the color numbers:'.freeze
 
   def initialize
-    @colors = [
-      "\u25CB", YELLOW_PEG, WHITE_PEG, RED_PEG, ORANGE_PEG, GREEN_PEG, BROWN_PEG, BLUE_PEG, BLACK_PEG
+    @pegs = [
+      EMPTY_PEG, YELLOW_PEG, WHITE_PEG, RED_PEG, ORANGE_PEG, GREEN_PEG, BROWN_PEG, BLUE_PEG, BLACK_PEG
     ]
-    @guessing_colors_arr = ["\u25CB " * 4] * 10
-    @input = nil
-    @correct_guess_arr = ["\u2715 " * 4] * 10
+    @guessing_colors_arr = ["#{EMPTY_PEG} " * 4] * 10
+    @input = ''
+    @correct_guess_arr = ["#{INCORRECT_PEG} " * 4] * 10
     @index_number = 0
   end
 
@@ -56,9 +59,22 @@ class MasterMind
     %w[1 2 3 4]
   end
 
+  def valid_input_length?
+    @input.size == 4
+  end
+
+  def input_validation
+    until valid_input_length?
+      puts ERROR_MESSAGE
+      @input = gets.chomp
+    end
+    @input
+  end
+
   def enter_colors_guess
-    puts "\nEnter your guess:"
+    puts INPUT_MESSAGE
     @input = gets.chomp
+    input_validation
   end
 
   def guess_correct?
@@ -66,12 +82,16 @@ class MasterMind
   end
 
   def update_guess_color_row
-    guessing_line = @input.split('').map { |num| "#{@colors[num.to_i]} " }
+    guessing_line = @input.split('').map { |num| "#{@pegs[num.to_i]} " }
     @guessing_colors_arr[@index_number] = guessing_line.join
   end
 
   def win?
     "\nWell Done you guessed in #{@index_number}\n\n" if guess_correct?
+  end
+
+  def lose?
+    "\nUnfortunately you didn't get the correct combination this time" if @index_number == 10 && !guess_correct?
   end
 
   def update_correct_guesses
@@ -107,4 +127,6 @@ puts mastermind.display
   puts mastermind.display
   puts mastermind.win?
   return if mastermind.guess_correct?
+
+  puts mastermind.lose?
 end
